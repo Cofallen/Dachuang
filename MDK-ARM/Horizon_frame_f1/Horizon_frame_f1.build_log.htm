@@ -27,24 +27,23 @@ Project File Date:  04/09/2026
 <h2>Output:</h2>
 *** Using Compiler 'V6.18', folder: 'D:\RoboMaster\SoftWare\MDK537\ARM\ARMCLANG\Bin'
 Build target 'Horizon_frame_f1'
-../User/App/print.c(32): warning: implicitly declaring library function 'sin' with type 'double (double)' [-Wimplicit-function-declaration]
-        uint8_t y = (uint8_t)(32 + 16 * sin(x * 0.1)); // 简单正弦波
-                                        ^
-../User/App/print.c(32): note: include the header <math.h> or explicitly provide a declaration for 'sin'
-../User/App/print.c(53): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
+../User/App/print.c(80): warning: implicitly declaring library function 'snprintf' with type 'int (char *, unsigned int, const char *, ...)' [-Wimplicit-function-declaration]
+    snprintf(lat_str, sizeof(lat_str), "Lat:%.4f", latitude);
+    ^
+../User/App/print.c(80): note: include the header <stdio.h> or explicitly provide a declaration for 'snprintf'
+../User/App/print.c(105): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
                 osDelay(10); // 防抖
                 ^
-../User/App/print.c(61): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
+../User/App/print.c(113): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
                 osDelay(10); // 防抖
                 ^
-../User/App/print.c(65): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-        osDelay(10); // 任务延时
+../User/App/print.c(134): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
+        osDelay(1); // 控制刷新频率
         ^
 4 warnings generated.
 compiling print.c...
-compiling All_Task.c...
 linking...
-Program Size: Code=45772 RO-data=3504 RW-data=168 ZI-data=10112  
+Program Size: Code=47972 RO-data=3276 RW-data=168 ZI-data=10472  
 FromELF: creating hex file...
 "Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 4 Warning(s).
 
@@ -70,7 +69,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.6.0
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>
