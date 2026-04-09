@@ -4,6 +4,7 @@
 #include "math.h"
 #include "stdlib.h" // 用于生成随机噪声
 #include "gpio.h"  
+#include "bsp_dwt.h" // 用于获取单片机运行时间
 
 #define M_PI 3.1415926f
 
@@ -67,14 +68,16 @@ void OLED_ShowWaveform(void) {
     }
 }
 
+float runtime = 0.0f;
+
 void OLED_ShowNumbers(void) {
-    // OLED_Clear(); // 清屏
+    
     OLED_ShowString(0, 0, "GPS:", 16, 0); // 显示 "GPS:"
 
     // 假设 GPS 坐标为以下变量（需要根据实际代码替换）
     float latitude = 39.6305;  // 纬度
     float longitude = 118.1806; // 经度
-    char lat_str[16], lon_str[16];
+    char lat_str[16], lon_str[16], time_str[16];
 
     // 格式化纬度和经度为字符串
     snprintf(lat_str, sizeof(lat_str), "Lat:%.4f", latitude);
@@ -89,18 +92,24 @@ void OLED_ShowNumbers(void) {
 
     // 显示当前城市
     OLED_ShowString(0, 7, "City: Tangshan", 12, 0); // 显示 "唐山"
+
+    // 获取单片机运行时间
+    runtime = DWT_GetTimeline_s();
+    snprintf(time_str, sizeof(time_str), "Time:%.2fs", runtime);
+
+    // 显示运行时间
+    OLED_ShowString(0, 5, time_str, 12, 0); // 显示运行时间
 }
 
 #include "gpio.h" // 确保包含 GPIO 配置头文件
 
+uint8_t mode = 0; // 当前模式，0: 波形模式, 1: 数字模式
 void StartKeyTask(void) {
-    static uint8_t mode = 0xFF; // 当前模式，初始化为无效值
-    uint8_t new_mode = 0;       // 新模式
-
     for (;;) {
         // 检测按键 1 是否按下
         if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) { // 按键按下
-            new_mode = 0; // 切换到波形模式
+            mode = 0; // 切换到波形模式
+            OLED_Clear(); // 清屏
             while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) {
                 osDelay(10); // 防抖
             }
@@ -108,27 +117,23 @@ void StartKeyTask(void) {
 
         // 检测按键 2 是否按下
         if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) { // 按键按下
-            new_mode = 1; // 切换到数字模式
+            mode = 1; // 切换到数字模式
+            OLED_Clear(); // 清屏
             while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) {
                 osDelay(10); // 防抖
             }
         }
 
-        // 如果模式发生变化，清屏并切换模式
-        if (new_mode != mode) {
-            mode = new_mode;
-            OLED_Clear(); // 清屏
+        osDelay(10); // 控制检测频率
+    }
+}
 
-            if (mode == 0) {
-                OLED_ShowWaveform(); // 显示动态波形
-            } else if (mode == 1) {
-                OLED_ShowNumbers(); // 显示数字状态
-            }
-        }
-
-        // 根据当前模式刷新内容
+void StartDisplayTask(void) {
+    for (;;) {
         if (mode == 0) {
-            OLED_ShowWaveform(); // 持续更新波形
+            OLED_ShowWaveform(); // 刷新波形
+        } else if (mode == 1) {
+            OLED_ShowNumbers(); // 刷新数字状态
         }
 
         osDelay(1); // 控制刷新频率

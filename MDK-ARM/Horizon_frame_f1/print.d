@@ -34,4 +34,4 @@ horizon_frame_f1/print.o: ..\User\App\print.c ..\User\App\inc\print.h \
   ..\User\App\inc\oledfont.h \
   D:\RoboMaster\SoftWare\MDK537\ARM\ARMCLANG\Bin\..\include\math.h \
   D:\RoboMaster\SoftWare\MDK537\ARM\ARMCLANG\Bin\..\include\stdlib.h \
-  ..\Core\Inc\gpio.h ..\Core\Inc\main.h
+  ..\Core\Inc\gpio.h ..\Core\Inc\main.h ..\User\Bsp\inc\bsp_dwt.h
