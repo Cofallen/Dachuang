@@ -5,6 +5,7 @@
 #include "stdlib.h" // 用于生成随机噪声
 #include "gpio.h"  
 #include "bsp_dwt.h" // 用于获取单片机运行时间
+#include "cmsis_os.h"
 
 #define M_PI 3.1415926f
 
@@ -70,8 +71,12 @@ void OLED_ShowWaveform(void) {
 
 float runtime = 0.0f;
 
-void OLED_ShowNumbers(void) {
-    
+uint8_t mode = 0; // 当前模式，0: 菜单页面, 1: 信息模式, 2: Happy 情绪, 3: Sad 情绪
+uint8_t menu_index = 0; // 当前菜单选项索引
+uint8_t last_mode = 0xFF; // 上一次的模式，用于检测模式切换
+char current_mood[16] = "Happy"; // 当前情绪状态
+
+void OLED_ShowInformation(void) {
     OLED_ShowString(0, 0, "GPS:", 16, 0); // 显示 "GPS:"
 
     // 假设 GPS 坐标为以下变量（需要根据实际代码替换）
@@ -87,8 +92,9 @@ void OLED_ShowNumbers(void) {
     OLED_ShowString(0, 2, lat_str, 12, 0); // 显示纬度
     OLED_ShowString(0, 3, lon_str, 12, 0); // 显示经度
 
-    // 显示情绪状态
-    OLED_ShowString(0, 6, "Mood: Happy", 12, 0); // 假设情绪状态为 "Happy"
+    // 显示情绪状态（与上一次选择的情绪相关）
+    OLED_ShowString(0, 6, "Mood:", 12, 0);
+    OLED_ShowString(36, 6, current_mood, 12, 0); // 显示当前情绪
 
     // 显示当前城市
     OLED_ShowString(0, 7, "City: Tangshan", 12, 0); // 显示 "唐山"
@@ -104,22 +110,20 @@ void OLED_ShowNumbers(void) {
 
 
 
-
 #include "gpio.h" // 确保包含 GPIO 配置头文件
 
-uint8_t mode = 0; // 当前模式，0: 菜单页面, 1: 波形模式, 2: 数字模式, 3: 悲伤情绪
-uint8_t menu_index = 0; // 当前菜单选项索引
-uint8_t last_mode = 0xFF; // 上一次的模式，用于检测模式切换
+
 
 void OLED_ShowMenu(void) {
     // OLED_Clear(); // 清屏
     OLED_ShowString(0, 0, "Menu:", 16, 0); // 显示菜单标题
 
     // 显示菜单选项
-    OLED_ShowString(0, 2, menu_index == 0 ? "> Waveform" : "  Waveform", 12, 0); // 波形模式
-    OLED_ShowString(0, 3, menu_index == 1 ? "> Numbers" : "  Numbers", 12, 0);   // 数字模式
+    OLED_ShowString(0, 2, menu_index == 0 ? "> information" : "  information", 12, 0); // 信息模式
+    OLED_ShowString(0, 3, menu_index == 1 ? "> Happy Mood" : "  Happy Mood", 12, 0);   // Happy 情绪
     OLED_ShowString(0, 4, menu_index == 2 ? "> Sad Mood" : "  Sad Mood", 12, 0); // 悲伤情绪
 }
+
 void OLED_ShowSadMoodWaveform(void) {
     static uint8_t buffer[128] = {0}; // 用于存储当前帧的波形数据
     static float phase = 0.0f;        // 用于控制正弦波的相位
@@ -166,6 +170,7 @@ void StartKeyTask(void) {
                 OLED_ShowMenu(); // 更新菜单显示
             } else {
                 mode = 0; // 返回菜单页面
+                OLED_Clear(); // 清屏
                 OLED_ShowMenu(); // 显示菜单
             }
             while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) {
@@ -177,6 +182,12 @@ void StartKeyTask(void) {
         if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) { // 按键按下
             if (mode == 0) { // 如果在菜单页面
                 mode = menu_index + 1; // 根据菜单选项进入对应模式
+                if (mode == 3) { // 如果进入悲伤情绪模式
+                    snprintf(current_mood, sizeof(current_mood), "Sad"); // 更新情绪状态
+                } else if (mode == 2) { // 如果进入 Happy 情绪模式
+                    snprintf(current_mood, sizeof(current_mood), "Happy"); // 更新情绪状态
+                }
+                OLED_Clear(); // 清屏
             }
             while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) {
                 osDelay(10); // 防抖
@@ -199,11 +210,11 @@ void StartDisplayTask(void) {
         if (mode == 0) {
             OLED_ShowMenu(); // 显示菜单页面
         } else if (mode == 1) {
-            OLED_ShowWaveform(); // 显示波形
+            OLED_ShowInformation(); // 显示信息页面
         } else if (mode == 2) {
-            OLED_ShowNumbers(); // 显示数字状态
+            OLED_ShowWaveform(); // 显示 Happy 情绪波形
         } else if (mode == 3) {
-            OLED_ShowSadMoodWaveform(); // 显示悲伤情绪波形
+            OLED_ShowSadMoodWaveform(); // 显示 Sad 情绪波形
         }
 
         osDelay(1); // 控制刷新频率

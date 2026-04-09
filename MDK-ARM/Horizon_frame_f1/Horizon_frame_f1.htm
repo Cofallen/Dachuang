@@ -3,7 +3,7 @@
 <title>Static Call Graph - [Horizon_frame_f1\Horizon_frame_f1.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image Horizon_frame_f1\Horizon_frame_f1.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6180002: Last Updated: Thu Apr  9 20:18:39 2026
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 6180002: Last Updated: Thu Apr  9 20:29:23 2026
 <BR><P>
 <H3>Maximum Stack Usage =        684 bytes + Unknown(Functions without stacksize, Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1416,7 +1416,8 @@ Global Symbols
 </UL>
 <BR>[Calls]<UL><LI><a href="#[c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_I2C_Mem_Write
 </UL>
-<BR>[Called By]<UL><LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDisplayTask
+<BR>[Called By]<UL><LI><a href="#[10a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartKeyTask
+<LI><a href="#[107]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartDisplayTask
 <LI><a href="#[109]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;oled_initc
 </UL>
 
@@ -1547,7 +1548,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.rodata..L__const.MX_FREERTOS_Init.os_thread_def_defaultTask)
 </UL>
-<P><STRONG><a name="[107]"></a>StartDisplayTask</STRONG> (Thumb, 422 bytes, Stack size 56 bytes, print.o(.text.StartDisplayTask))
+<P><STRONG><a name="[107]"></a>StartDisplayTask</STRONG> (Thumb, 438 bytes, Stack size 56 bytes, print.o(.text.StartDisplayTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 280 + Unknown Stack Size
 <LI>Call Chain = StartDisplayTask &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnMasterAddressFlagUntilTimeout
 </UL>
@@ -1573,12 +1574,13 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(.rodata..L__const.MX_FREERTOS_Init.os_thread_def_gimbalTask)
 </UL>
-<P><STRONG><a name="[10a]"></a>StartKeyTask</STRONG> (Thumb, 290 bytes, Stack size 8 bytes, print.o(.text.StartKeyTask))
+<P><STRONG><a name="[10a]"></a>StartKeyTask</STRONG> (Thumb, 350 bytes, Stack size 8 bytes, print.o(.text.StartKeyTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 232<LI>Call Chain = StartKeyTask &rArr; OLED_ShowString &rArr; OLED_ShowChar &rArr; HAL_I2C_Mem_Write &rArr; I2C_RequestMemoryWrite &rArr; I2C_WaitOnMasterAddressFlagUntilTimeout
 </UL>
 <BR>[Calls]<UL><LI><a href="#[10b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GPIO_ReadPin
 <LI><a href="#[f7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[103]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_ShowString
+<LI><a href="#[f4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OLED_Clear
 </UL>
 <BR>[Called By]<UL><LI><a href="#[46]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartMonitorTask
 </UL>

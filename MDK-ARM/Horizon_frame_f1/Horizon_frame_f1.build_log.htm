@@ -27,28 +27,16 @@ Project File Date:  04/09/2026
 <h2>Output:</h2>
 *** Using Compiler 'V6.18', folder: 'D:\RoboMaster\SoftWare\MDK537\ARM\ARMCLANG\Bin'
 Build target 'Horizon_frame_f1'
-../User/App/print.c(83): warning: implicitly declaring library function 'snprintf' with type 'int (char *, unsigned int, const char *, ...)' [-Wimplicit-function-declaration]
+../User/App/print.c(88): warning: implicitly declaring library function 'snprintf' with type 'int (char *, unsigned int, const char *, ...)' [-Wimplicit-function-declaration]
     snprintf(lat_str, sizeof(lat_str), "Lat:%.4f", latitude);
     ^
-../User/App/print.c(83): note: include the header <stdio.h> or explicitly provide a declaration for 'snprintf'
-../User/App/print.c(172): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-                osDelay(10); // 防抖
-                ^
-../User/App/print.c(182): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-                osDelay(10); // 防抖
-                ^
-../User/App/print.c(186): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-        osDelay(10); // 控制检测频率
-        ^
-../User/App/print.c(209): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-        osDelay(1); // 控制刷新频率
-        ^
-5 warnings generated.
+../User/App/print.c(88): note: include the header <stdio.h> or explicitly provide a declaration for 'snprintf'
+1 warning generated.
 compiling print.c...
 linking...
-Program Size: Code=48612 RO-data=3360 RW-data=172 ZI-data=10612  
+Program Size: Code=48688 RO-data=3352 RW-data=188 ZI-data=10612  
 FromELF: creating hex file...
-"Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 5 Warning(s).
+"Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 1 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -72,7 +60,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.6.0
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>
