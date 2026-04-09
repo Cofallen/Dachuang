@@ -71,10 +71,12 @@ void OLED_ShowWaveform(void) {
 
 float runtime = 0.0f;
 
-uint8_t mode = 0; // 当前模式，0: 菜单页面, 1: 信息模式, 2: Happy 情绪, 3: Sad 情绪
+uint8_t mode = 0; // 当前模式，0: 菜单页面, 1: 信息模式, 2: Happy 情绪, 3: Sad 情绪, 4: Surprised, 5: Afraid, 6: Relaxed
 uint8_t menu_index = 0; // 当前菜单选项索引
 uint8_t last_mode = 0xFF; // 上一次的模式，用于检测模式切换
 char current_mood[16] = "Happy"; // 当前情绪状态
+
+uint8_t flag = 0; // WIFI连接状态标志，0: 连接失败, 1: 连接成功
 
 void OLED_ShowInformation(void) {
     OLED_ShowString(0, 0, "GPS:", 16, 0); // 显示 "GPS:"
@@ -91,6 +93,16 @@ void OLED_ShowInformation(void) {
     // 显示纬度和经度
     OLED_ShowString(0, 2, lat_str, 12, 0); // 显示纬度
     OLED_ShowString(0, 3, lon_str, 12, 0); // 显示经度
+
+    OLED_ShowString(0, 4, "WIFI Connect:", 12, 0);
+    if (flag == 0)
+    {
+        OLED_ShowString(80, 4, "failed", 12, 0);
+    }
+    else
+    {
+        OLED_ShowString(80, 4, "success", 12, 0);
+    }
 
     // 显示情绪状态（与上一次选择的情绪相关）
     OLED_ShowString(0, 6, "Mood:", 12, 0);
@@ -119,9 +131,12 @@ void OLED_ShowMenu(void) {
     OLED_ShowString(0, 0, "Menu:", 16, 0); // 显示菜单标题
 
     // 显示菜单选项
-    OLED_ShowString(0, 2, menu_index == 0 ? "> information" : "  information", 12, 0); // 信息模式
-    OLED_ShowString(0, 3, menu_index == 1 ? "> Happy Mood" : "  Happy Mood", 12, 0);   // Happy 情绪
-    OLED_ShowString(0, 4, menu_index == 2 ? "> Sad Mood" : "  Sad Mood", 12, 0); // 悲伤情绪
+    OLED_ShowString(0, 2, menu_index == 0 ? "> Information" : "  Information", 12, 0); // 信息模式
+    OLED_ShowString(0, 3, menu_index == 1 ? "> Happy" : "  Happy", 12, 0);             // Happy 情绪
+    OLED_ShowString(0, 4, menu_index == 2 ? "> Sad Mood" : "  Sad Mood", 12, 0);      // Sad 情绪
+    OLED_ShowString(0, 5, menu_index == 3 ? "> Surprised" : "  Surprised", 12, 0);    // Surprised 情绪
+    OLED_ShowString(0, 6, menu_index == 4 ? "> Afraid" : "  Afraid", 12, 0);          // Afraid 情绪
+    OLED_ShowString(0, 7, menu_index == 5 ? "> Relaxed" : "  Relaxed", 12, 0);        // Relaxed 情绪
 }
 
 void OLED_ShowSadMoodWaveform(void) {
@@ -161,62 +176,154 @@ void OLED_ShowSadMoodWaveform(void) {
     }
 }
 
+/// 后面是波形
+void OLED_ShowHappyWaveform(void) {
+    // Happy 情绪波形逻辑（与之前相同）
+    OLED_ShowWaveform();
+}
+
+void OLED_ShowSadWaveform(void) {
+    OLED_ShowSadMoodWaveform();
+}
+
+void OLED_ShowSurprisedWaveform(void) {
+    static uint8_t buffer[128] = {0};
+    static float phase = 0.0f;
+    static uint8_t x_offset = 0;
+
+    float new_y = 32.0f + 20.0f * sinf(phase) + (rand() % 10 - 5); // 高振幅 + 噪声
+    if (new_y < 0) new_y = 0;
+    if (new_y > 63) new_y = 63;
+
+    buffer[x_offset] = (uint8_t)new_y;
+
+    for (uint8_t i = 0; i < 8; i++) {
+        OLED_Set_Pos(x_offset, i);
+        OLED_WR_DATA(0x00);
+    }
+
+    OLED_Set_Pos(x_offset, buffer[x_offset] / 8);
+    OLED_WR_DATA(1 << (buffer[x_offset] % 8));
+
+    x_offset = (x_offset + 1) % 128;
+    phase += 0.2f;
+    if (phase > 2 * M_PI) {
+        phase -= 2 * M_PI;
+    }
+}
+
+void OLED_ShowAfraidWaveform(void) {
+    static uint8_t buffer[128] = {0};
+    static float phase = 0.0f;
+    static uint8_t x_offset = 0;
+
+    float new_y = 32.0f + 10.0f * sinf(phase * 3.0f) + (rand() % 5 - 2); // 高频正弦波 + 噪声
+    if (new_y < 0) new_y = 0;
+    if (new_y > 63) new_y = 63;
+
+    buffer[x_offset] = (uint8_t)new_y;
+
+    for (uint8_t i = 0; i < 8; i++) {
+        OLED_Set_Pos(x_offset, i);
+        OLED_WR_DATA(0x00);
+    }
+
+    OLED_Set_Pos(x_offset, buffer[x_offset] / 8);
+    OLED_WR_DATA(1 << (buffer[x_offset] % 8));
+
+    x_offset = (x_offset + 1) % 128;
+    phase += 0.3f;
+    if (phase > 2 * M_PI) {
+        phase -= 2 * M_PI;
+    }
+}
+
+void OLED_ShowRelaxedWaveform(void) {
+    static uint8_t buffer[128] = {0};
+    static float phase = 0.0f;
+    static uint8_t x_offset = 0;
+
+    float new_y = 32.0f + 5.0f * sinf(phase); // 低频正弦波
+    if (new_y < 0) new_y = 0;
+    if (new_y > 63) new_y = 63;
+
+    buffer[x_offset] = (uint8_t)new_y;
+
+    for (uint8_t i = 0; i < 8; i++) {
+        OLED_Set_Pos(x_offset, i);
+        OLED_WR_DATA(0x00);
+    }
+
+    OLED_Set_Pos(x_offset, buffer[x_offset] / 8);
+    OLED_WR_DATA(1 << (buffer[x_offset] % 8));
+
+    x_offset = (x_offset + 1) % 128;
+    phase += 0.05f;
+    if (phase > 2 * M_PI) {
+        phase -= 2 * M_PI;
+    }
+}
+
 void StartKeyTask(void) {
     for (;;) {
-        // 检测按键 1 是否按下（返回/切换菜单）
-        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) { // 按键按下
-            if (mode == 0) { // 如果在菜单页面
-                menu_index = (menu_index + 1) % 3; // 切换到下一个菜单选项
-                OLED_ShowMenu(); // 更新菜单显示
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) {
+            if (mode == 0) {
+                menu_index = (menu_index + 1) % 6; // 菜单选项增加到 6
+                OLED_ShowMenu();
             } else {
-                mode = 0; // 返回菜单页面
-                OLED_Clear(); // 清屏
-                OLED_ShowMenu(); // 显示菜单
+                mode = 0;
+                OLED_Clear();
+                OLED_ShowMenu();
             }
             while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) {
-                osDelay(10); // 防抖
+                osDelay(10);
             }
         }
 
-        // 检测按键 2 是否按下（确认/进入模式）
-        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) { // 按键按下
-            if (mode == 0) { // 如果在菜单页面
-                mode = menu_index + 1; // 根据菜单选项进入对应模式
-                if (mode == 3) { // 如果进入悲伤情绪模式
-                    snprintf(current_mood, sizeof(current_mood), "Sad"); // 更新情绪状态
-                } else if (mode == 2) { // 如果进入 Happy 情绪模式
-                    snprintf(current_mood, sizeof(current_mood), "Happy"); // 更新情绪状态
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) {
+            if (mode == 0) {
+                mode = menu_index + 1;
+                switch (mode) {
+                    case 2: snprintf(current_mood, sizeof(current_mood), "Happy"); break;
+                    case 3: snprintf(current_mood, sizeof(current_mood), "Sad"); break;
+                    case 4: snprintf(current_mood, sizeof(current_mood), "Surprised"); break;
+                    case 5: snprintf(current_mood, sizeof(current_mood), "Afraid"); break;
+                    case 6: snprintf(current_mood, sizeof(current_mood), "Relaxed"); break;
                 }
-                OLED_Clear(); // 清屏
+                OLED_Clear();
             }
             while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) {
-                osDelay(10); // 防抖
+                osDelay(10);
             }
         }
 
-        osDelay(10); // 控制检测频率
+        osDelay(10);
     }
 }
 
 void StartDisplayTask(void) {
     for (;;) {
-        // 检测模式是否切换
         if (mode != last_mode) {
-            OLED_Clear(); // 仅在模式切换时清屏
-            last_mode = mode; // 更新上一次的模式
+            OLED_Clear();
+            last_mode = mode;
         }
 
-        // 根据当前模式刷新显示内容
         if (mode == 0) {
-            OLED_ShowMenu(); // 显示菜单页面
+            OLED_ShowMenu();
         } else if (mode == 1) {
-            OLED_ShowInformation(); // 显示信息页面
+            OLED_ShowInformation();
         } else if (mode == 2) {
-            OLED_ShowWaveform(); // 显示 Happy 情绪波形
+            OLED_ShowHappyWaveform();
         } else if (mode == 3) {
-            OLED_ShowSadMoodWaveform(); // 显示 Sad 情绪波形
+            OLED_ShowSadWaveform();
+        } else if (mode == 4) {
+            OLED_ShowSurprisedWaveform();
+        } else if (mode == 5) {
+            OLED_ShowAfraidWaveform();
+        } else if (mode == 6) {
+            OLED_ShowRelaxedWaveform();
         }
 
-        osDelay(1); // 控制刷新频率
+        osDelay(1);
     }
 }
