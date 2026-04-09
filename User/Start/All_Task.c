@@ -9,6 +9,7 @@
 #include "gps.h"
 #include "esp.h"
 #include "stdio.h"
+#include "print.h"
 
 void StartDefaultTask(void)
 {
@@ -22,6 +23,7 @@ void StartDefaultTask(void)
 
 void StartGimbalTask(void)
 {
+    oled_initc();
     for(;;)
     {
         ALL_CONTAL.DWT_TIME.Gimbal_dt = DWT_GetDeltaT(&ALL_CONTAL.DWT_TIME.Gimbal_Count);

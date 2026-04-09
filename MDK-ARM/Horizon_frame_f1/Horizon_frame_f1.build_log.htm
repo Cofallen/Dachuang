@@ -22,7 +22,7 @@ Dialog DLL:      TCM.DLL V1.56.1.0
  
 <h2>Project:</h2>
 D:\RoboMaster\2026\lidar\dachuang\Horizon_frame_f1\MDK-ARM\Horizon_frame_f1.uvprojx
-Project File Date:  04/08/2026
+Project File Date:  04/09/2026
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.18', folder: 'D:\RoboMaster\SoftWare\MDK537\ARM\ARMCLANG\Bin'
@@ -45,18 +45,12 @@ static void send_data_nb(uint8_t client_id, const uint8_t *data, uint16_t len) {
 ../User/App/esp.c(33): note: passing argument to parameter 'data' here
 static void send_data_nb(uint8_t client_id, const uint8_t *data, uint16_t len) {
                                                            ^
-../User/App/esp.c(140): warning: passing 'char[9]' to parameter of type 'const uint8_t *' (aka 'const unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-    at_send_nb("AT+RST\r\n");
-               ^~~~~~~~~~~~
-../User/App/esp.c(26): note: passing argument to parameter 'cmd' here
-static uint8_t at_send_nb(const uint8_t *cmd) {
-                                         ^
-4 warnings generated.
+3 warnings generated.
 compiling esp.c...
 linking...
-Program Size: Code=39564 RO-data=2076 RW-data=20 ZI-data=10884  
+Program Size: Code=47912 RO-data=4324 RW-data=172 ZI-data=10972  
 FromELF: creating hex file...
-"Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 4 Warning(s).
+"Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -80,7 +74,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.6.0
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:02
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

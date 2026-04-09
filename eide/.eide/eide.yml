@@ -25,6 +25,7 @@ virtualFolder:
                 - path: ../Core/Src/freertos.c
                 - path: ../Core/Src/can.c
                 - path: ../Core/Src/dma.c
+                - path: ../Core/Src/i2c.c
                 - path: ../Core/Src/tim.c
                 - path: ../Core/Src/usart.c
                 - path: ../Core/Src/stm32f1xx_it.c
@@ -50,6 +51,7 @@ virtualFolder:
             - path: ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash.c
             - path: ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_flash_ex.c
             - path: ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_exti.c
+            - path: ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_i2c.c
             - path: ../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c
           folders: []
         - name: CMSIS
@@ -88,8 +90,11 @@ virtualFolder:
       files:
         - path: ../User/App/Gimbal_Task.c
         - path: ../User/App/Robot.c
-        - path: ../User/App/esp.c
         - path: ../User/App/gps.c
+        - path: ../User/App/esp.c
+        - path: ../User/App/oled.c
+        - path: ../User/App/oledfont.c
+        - path: ../User/App/print.c
       folders: []
     - name: Bsp
       files:
@@ -130,8 +135,7 @@ targets:
         - ../MDK-ARM/RTE/_Horizon_frame_f1
       libList: []
     excludeList: []
-    settings:
-      debugger: cortex-debug
+    settings: {}
     toolchain: AC6
     toolchainConfigMap:
       AC5:
@@ -223,6 +227,7 @@ targets:
           afterBuildTasks: []
           asm-compiler:
             $use: asm-auto
+            defines: []
             misc-controls: ""
           beforeBuildTasks: []
           c/cpp-compiler:
@@ -339,6 +344,11 @@ targets:
         otherCmds: ""
         proType: 1
         speed: 8000
+      OpenOCD:
+        baseAddr: "0x08000000"
+        bin: ""
+        interface: stlink
+        target: stm32f1x
       STLink:
         address: "0x8000000"
         bin: ""
@@ -349,4 +359,4 @@ targets:
         resetMode: default
         runAfterProgram: true
         speed: 4000
-    uploader: STLink
+    uploader: OpenOCD
