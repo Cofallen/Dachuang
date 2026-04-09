@@ -101,24 +101,83 @@ void OLED_ShowNumbers(void) {
     OLED_ShowString(0, 5, time_str, 12, 0); // 显示运行时间
 }
 
+
+
+
+
 #include "gpio.h" // 确保包含 GPIO 配置头文件
 
-uint8_t mode = 0; // 当前模式，0: 波形模式, 1: 数字模式
+uint8_t mode = 0; // 当前模式，0: 菜单页面, 1: 波形模式, 2: 数字模式, 3: 悲伤情绪
+uint8_t menu_index = 0; // 当前菜单选项索引
+uint8_t last_mode = 0xFF; // 上一次的模式，用于检测模式切换
+
+void OLED_ShowMenu(void) {
+    // OLED_Clear(); // 清屏
+    OLED_ShowString(0, 0, "Menu:", 16, 0); // 显示菜单标题
+
+    // 显示菜单选项
+    OLED_ShowString(0, 2, menu_index == 0 ? "> Waveform" : "  Waveform", 12, 0); // 波形模式
+    OLED_ShowString(0, 3, menu_index == 1 ? "> Numbers" : "  Numbers", 12, 0);   // 数字模式
+    OLED_ShowString(0, 4, menu_index == 2 ? "> Sad Mood" : "  Sad Mood", 12, 0); // 悲伤情绪
+}
+void OLED_ShowSadMoodWaveform(void) {
+    static uint8_t buffer[128] = {0}; // 用于存储当前帧的波形数据
+    static float phase = 0.0f;        // 用于控制正弦波的相位
+    static uint8_t x_offset = 0;     // 用于滚动更新的偏移量
+
+    // 生成新数据点（悲伤情绪波形：低频正弦波 + 噪声）
+    float new_y = 32.0f + 8.0f * sinf(phase) +
+                  4.0f * sinf(phase * 0.5f) +
+                  (rand() % 3 - 1); // 小噪声（-1 到 1）
+
+    // 限制 y 的范围在 0 到 63（OLED 高度）
+    if (new_y < 0) new_y = 0;
+    if (new_y > 63) new_y = 63;
+
+    // 将新数据点存入缓冲区
+    buffer[x_offset] = (uint8_t)new_y;
+
+    // 清除当前列的像素（避免闪烁）
+    for (uint8_t i = 0; i < 8; i++) {
+        OLED_Set_Pos(x_offset, i);
+        OLED_WR_DATA(0x00); // 清空当前列
+    }
+
+    // 更新当前列的像素
+    OLED_Set_Pos(x_offset, buffer[x_offset] / 8);
+    OLED_WR_DATA(1 << (buffer[x_offset] % 8));
+
+    // 更新偏移量，实现滚动效果
+    x_offset = (x_offset + 1) % 128;
+
+    // 更新相位，制造动态效果
+    phase += 0.05f; // 悲伤情绪波形频率较低
+    if (phase > 2 * M_PI) {
+        phase -= 2 * M_PI;
+    }
+}
+
 void StartKeyTask(void) {
     for (;;) {
-        // 检测按键 1 是否按下
+        // 检测按键 1 是否按下（返回/切换菜单）
         if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) { // 按键按下
-            mode = 0; // 切换到波形模式
-            OLED_Clear(); // 清屏
+            if (mode == 0) { // 如果在菜单页面
+                menu_index = (menu_index + 1) % 3; // 切换到下一个菜单选项
+                OLED_ShowMenu(); // 更新菜单显示
+            } else {
+                mode = 0; // 返回菜单页面
+                OLED_ShowMenu(); // 显示菜单
+            }
             while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_11) == GPIO_PIN_RESET) {
                 osDelay(10); // 防抖
             }
         }
 
-        // 检测按键 2 是否按下
+        // 检测按键 2 是否按下（确认/进入模式）
         if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) { // 按键按下
-            mode = 1; // 切换到数字模式
-            OLED_Clear(); // 清屏
+            if (mode == 0) { // 如果在菜单页面
+                mode = menu_index + 1; // 根据菜单选项进入对应模式
+            }
             while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET) {
                 osDelay(10); // 防抖
             }
@@ -130,10 +189,21 @@ void StartKeyTask(void) {
 
 void StartDisplayTask(void) {
     for (;;) {
+        // 检测模式是否切换
+        if (mode != last_mode) {
+            OLED_Clear(); // 仅在模式切换时清屏
+            last_mode = mode; // 更新上一次的模式
+        }
+
+        // 根据当前模式刷新显示内容
         if (mode == 0) {
-            OLED_ShowWaveform(); // 刷新波形
+            OLED_ShowMenu(); // 显示菜单页面
         } else if (mode == 1) {
-            OLED_ShowNumbers(); // 刷新数字状态
+            OLED_ShowWaveform(); // 显示波形
+        } else if (mode == 2) {
+            OLED_ShowNumbers(); // 显示数字状态
+        } else if (mode == 3) {
+            OLED_ShowSadMoodWaveform(); // 显示悲伤情绪波形
         }
 
         osDelay(1); // 控制刷新频率
