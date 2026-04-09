@@ -84,6 +84,6 @@ void User_IRQHandler(UART_HandleTypeDef *huart)
 //            RUI_F_DUBS_Resovled(&DBUS_V_UNION, &DBUS_V_DATA);
 //            HAL_UART_Receive_DMA(&huart3, (uint8_t *)DBUS_V_UNION.GetData, 19);
 //        }
-		ESP_UART_IdleCallback();   // 处理空闲中断
+//		ESP_UART_IdleCallback();   // 处理空闲中断
     }
 }

@@ -31,4 +31,4 @@ horizon_frame_f1/print.o: ..\User\App\print.c ..\User\App\inc\print.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_tim_ex.h \
   ..\Drivers\STM32F1xx_HAL_Driver\Inc\stm32f1xx_hal_uart.h \
-  ..\User\App\inc\oledfont.h
+  ..\User\App\inc\oledfont.h ..\Core\Inc\gpio.h ..\Core\Inc\main.h

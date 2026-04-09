@@ -35,12 +35,20 @@ void StartGimbalTask(void)
 
 void StartMonitorTask(void)
 {
-    esp_task_entry();
-	
+//    esp_task_entry();
+	StartKeyTask();
     for(;;)
     {
         ALL_CONTAL.DWT_TIME.Monitor_dt = DWT_GetDeltaT(&ALL_CONTAL.DWT_TIME.Monitor_Count);
-        
+        if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_10) == GPIO_PIN_RESET)
+        {
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_SET);
+        }
+        else
+        {
+            HAL_GPIO_WritePin(GPIOB, GPIO_PIN_13, GPIO_PIN_RESET);
+        }
+
         osDelay(1);
     }
 }

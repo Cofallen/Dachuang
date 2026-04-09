@@ -27,30 +27,26 @@ Project File Date:  04/09/2026
 <h2>Output:</h2>
 *** Using Compiler 'V6.18', folder: 'D:\RoboMaster\SoftWare\MDK537\ARM\ARMCLANG\Bin'
 Build target 'Horizon_frame_f1'
-../User/App/esp.c(40): warning: passing 'char[48]' to parameter of type 'const uint8_t *' (aka 'const unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-    at_send_nb(header);
-               ^~~~~~
-../User/App/esp.c(26): note: passing argument to parameter 'cmd' here
-static uint8_t at_send_nb(const uint8_t *cmd) {
-                                         ^
-../User/App/esp.c(74): warning: passing 'char[128]' to parameter of type 'const uint8_t *' (aka 'const unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-            send_data_nb(esp_client_id, json, (uint16_t)strlen(json));
-                                        ^~~~
-../User/App/esp.c(33): note: passing argument to parameter 'data' here
-static void send_data_nb(uint8_t client_id, const uint8_t *data, uint16_t len) {
-                                                           ^
-../User/App/esp.c(97): warning: passing 'const char *' to parameter of type 'const uint8_t *' (aka 'const unsigned char *') converts between pointers to integer types where one is of the unique plain 'char' type and the other is not [-Wpointer-sign]
-            send_data_nb(esp_client_id, html, (uint16_t)strlen(html));
-                                        ^~~~
-../User/App/esp.c(33): note: passing argument to parameter 'data' here
-static void send_data_nb(uint8_t client_id, const uint8_t *data, uint16_t len) {
-                                                           ^
-3 warnings generated.
-compiling esp.c...
+../User/App/print.c(32): warning: implicitly declaring library function 'sin' with type 'double (double)' [-Wimplicit-function-declaration]
+        uint8_t y = (uint8_t)(32 + 16 * sin(x * 0.1)); // 简单正弦波
+                                        ^
+../User/App/print.c(32): note: include the header <math.h> or explicitly provide a declaration for 'sin'
+../User/App/print.c(53): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
+                osDelay(10); // 防抖
+                ^
+../User/App/print.c(61): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
+                osDelay(10); // 防抖
+                ^
+../User/App/print.c(65): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
+        osDelay(10); // 任务延时
+        ^
+4 warnings generated.
+compiling print.c...
+compiling All_Task.c...
 linking...
-Program Size: Code=47912 RO-data=4324 RW-data=172 ZI-data=10972  
+Program Size: Code=45772 RO-data=3504 RW-data=168 ZI-data=10112  
 FromELF: creating hex file...
-"Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 3 Warning(s).
+"Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 4 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -74,7 +70,7 @@ Package Vendor: Keil
 
    * Component: ARM::CMSIS:CORE:5.6.0
       Include file:  CMSIS/Core/Include/tz_context.h
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:02
 </pre>
 </body>
 </html>
