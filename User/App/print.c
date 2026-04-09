@@ -85,7 +85,7 @@ void OLED_ShowNumbers(void) {
 
     // 显示纬度和经度
     OLED_ShowString(0, 2, lat_str, 12, 0); // 显示纬度
-    OLED_ShowString(0, 4, lon_str, 12, 0); // 显示经度
+    OLED_ShowString(0, 3, lon_str, 12, 0); // 显示经度
 
     // 显示情绪状态
     OLED_ShowString(0, 6, "Mood: Happy", 12, 0); // 假设情绪状态为 "Happy"

@@ -27,33 +27,11 @@ Project File Date:  04/09/2026
 <h2>Output:</h2>
 *** Using Compiler 'V6.18', folder: 'D:\RoboMaster\SoftWare\MDK537\ARM\ARMCLANG\Bin'
 Build target 'Horizon_frame_f1'
-../User/Start/All_Task.c(30): warning: implicit declaration of function 'StartDisplayTask' is invalid in C99 [-Wimplicit-function-declaration]
-    StartDisplayTask();
-    ^
-1 warning generated.
-compiling All_Task.c...
-../User/App/print.c(83): warning: implicitly declaring library function 'snprintf' with type 'int (char *, unsigned int, const char *, ...)' [-Wimplicit-function-declaration]
-    snprintf(lat_str, sizeof(lat_str), "Lat:%.4f", latitude);
-    ^
-../User/App/print.c(83): note: include the header <stdio.h> or explicitly provide a declaration for 'snprintf'
-../User/App/print.c(114): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-                osDelay(10); // 防抖
-                ^
-../User/App/print.c(123): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-                osDelay(10); // 防抖
-                ^
-../User/App/print.c(127): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-        osDelay(10); // 控制检测频率
-        ^
-../User/App/print.c(139): warning: implicit declaration of function 'osDelay' is invalid in C99 [-Wimplicit-function-declaration]
-        osDelay(1); // 控制刷新频率
-        ^
-5 warnings generated.
-compiling print.c...
+compiling oled.c...
 linking...
-Program Size: Code=47960 RO-data=3288 RW-data=168 ZI-data=10480  
+Program Size: Code=47928 RO-data=3288 RW-data=168 ZI-data=10480  
 FromELF: creating hex file...
-"Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 6 Warning(s).
+"Horizon_frame_f1\Horizon_frame_f1.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
